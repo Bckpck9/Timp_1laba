@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const API = 'http://localhost:5001';
+const API = '/api';
 const THRESHOLD = 70;
 
 const Form = ({ mode }) => {
