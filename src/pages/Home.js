@@ -34,8 +34,6 @@ const Home = () => {
 
       <div style={{ display: 'flex', fontWeight: 'bold', marginBottom: '10px' }}>
         <div style={{ width: '220px' }}>Название</div>
-        <div style={{ width: '260px' }}>Место</div>
-        <div style={{ width: '90px' }}>Значение</div>
         <div style={{ width: '110px' }}>Статус</div>
         <div>Действия</div>
       </div>
