@@ -10,14 +10,15 @@ const Detail = () => {
   const [sensor, setSensor] = useState(null);
 
   useEffect(() => {
-    async function loadSensor() {
+    const loadSensor = async () => {
       try {
-        const response = await axios.get(`${API}/sensors/${id}`);
-        setSensor(response.data);
+        const { data } = await axios.get(`${API}/sensors/${id}`);
+        setSensor(data);
       } catch (error) {
         console.error('Ошибка загрузки:', error);
       }
-    }
+    };
+
     loadSensor();
   }, [id]);
 
@@ -27,18 +28,28 @@ const Detail = () => {
     <div>
       <h1>Информация о датчике</h1>
 
-      <p><b>ID:</b> {sensor.id}</p>
-      <p><b>Название:</b> {sensor.name}</p>
-      <p><b>Место:</b> {sensor.place}</p>
-      <p><b>Значение:</b> {sensor.value}</p>
-      <p><b>Статус:</b> {sensor.alarm ? 'ТРЕВОГА' : 'норма'}</p>
+      <table cellPadding="8" cellSpacing="0">
+        <colgroup>
+          <col width="160" />
+          <col width="520" />
+        </colgroup>
+        <tbody>
+          <tr><td><b>ID</b></td><td>{sensor.id}</td></tr>
+          <tr><td><b>Название</b></td><td>{sensor.name}</td></tr>
+          <tr><td><b>Место</b></td><td>{sensor.place}</td></tr>
+          <tr><td><b>Значение</b></td><td>{sensor.value}</td></tr>
+          <tr><td><b>Статус</b></td><td>{sensor.alarm ? 'ТРЕВОГА' : 'норма'}</td></tr>
+        </tbody>
+      </table>
 
-      <div style={{ marginTop: '12px' }}>
-        <button onClick={() => navigate(-1)}>Назад</button>
-        <Link to={`/edit/${sensor.id}`} style={{ marginLeft: '10px' }}>
-          Изменить
-        </Link>
-      </div>
+      <br />
+      <button type="button" onClick={() => navigate(-1)}>Назад</button>
+      &nbsp;&nbsp;&nbsp;
+      <Link to={`/edit/${sensor.id}`}>Изменить</Link>
+
+      <br />
+      <br />
+      <Link to={`/incidents?sensorId=${sensor.id}`}>Инциденты этого датчика</Link>
     </div>
   );
 };
