@@ -3,16 +3,16 @@
     {
       "name": "Датчик дыма №1",
       "place": "Склад 1",
-      "value": 56,
-      "alarm": false,
+      "value": 78,
+      "alarm": true,
       "id": "1"
     },
     {
-      "id": "2",
       "name": "Датчик температуры №2",
       "place": "Кабинет 203",
       "value": 78,
-      "alarm": true
+      "alarm": true,
+      "id": "2"
     },
     {
       "id": "db76",
@@ -20,6 +20,35 @@
       "place": "Склад 13",
       "value": 89,
       "alarm": true
+    },
+    {
+      "name": "4 датчик",
+      "place": "Кабинет 55",
+      "value": 80,
+      "alarm": true,
+      "id": "37d8"
+    }
+  ],
+  "incidents": [
+    {
+      "id": "2bb0",
+      "sensorId": "37d8",
+      "type": "ALARM_ON",
+      "message": "Тревога началась: value=80 (порог 70)",
+      "createdAt": "2026-03-05T12:29:11.805Z"
+    },
+    {
+      "id": "0533",
+      "sensorId": "db76",
+      "type": "ALARM_ON",
+      "message": "тест",
+      "createdAt": "2026-03-05T13:58:16.430Z"
+    },
+    {
+      "sensorId": "1",
+      "type": "ALARM_OFF",
+      "message": "тест",
+      "id": "f8c0"
     }
   ]
 }
