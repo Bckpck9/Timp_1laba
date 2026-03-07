@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 
 const API = '/api';
 const THRESHOLD = 70;
@@ -17,16 +17,16 @@ const Form = ({ mode }) => {
   useEffect(() => {
     if (!isEdit) return;
 
-    async function loadSensor() {
+    const loadSensor = async () => {
       try {
-        const response = await axios.get(`${API}/sensors/${id}`);
-        setName(response.data?.name ?? '');
-        setPlace(response.data?.place ?? '');
-        setValue(String(response.data?.value ?? ''));
+        const { data } = await axios.get(`${API}/sensors/${id}`);
+        setName(data?.name ?? '');
+        setPlace(data?.place ?? '');
+        setValue(String(data?.value ?? ''));
       } catch (error) {
         console.error('Ошибка загрузки для редактирования:', error);
       }
-    }
+    };
 
     loadSensor();
   }, [isEdit, id]);
@@ -36,29 +36,14 @@ const Form = ({ mode }) => {
 
     const valueNumber = Number(value);
     const alarm = valueNumber >= THRESHOLD;
-
-    const payload = {
-      name,
-      place,
-      value: valueNumber,
-      alarm
-    };
+    const payload = { name, place, value: valueNumber, alarm };
 
     try {
       if (isEdit) {
-        await axios.put(
-          `${API}/sensors/${id}`,
-          JSON.stringify(payload),
-          { headers: { 'Content-Type': 'application/json' } }
-        );
+        await axios.put(`${API}/sensors/${id}`, payload);
       } else {
-        await axios.post(
-          `${API}/sensors`,
-          JSON.stringify(payload),
-          { headers: { 'Content-Type': 'application/json' } }
-        );
+        await axios.post(`${API}/sensors`, payload);
       }
-
       navigate('/');
     } catch (error) {
       console.error('Ошибка сохранения:', error);
@@ -71,48 +56,42 @@ const Form = ({ mode }) => {
     <div>
       <h1>{isEdit ? 'Редактирование датчика' : 'Добавление датчика'}</h1>
 
+      <div>Статус (авто): <b>{alarmPreview ? 'ТРЕВОГА' : 'норма'}</b> (порог {THRESHOLD})</div>
+      <br />
+
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Название:
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </label>
-        </div>
+        <table cellPadding="8" cellSpacing="0">
+          <colgroup>
+            <col width="160" />
+            <col width="520" />
+          </colgroup>
+          <tbody>
+            <tr>
+              <td><b>Название</b></td>
+              <td><input value={name} onChange={(e) => setName(e.target.value)} required /></td>
+            </tr>
+            <tr>
+              <td><b>Место</b></td>
+              <td><input value={place} onChange={(e) => setPlace(e.target.value)} required /></td>
+            </tr>
+            <tr>
+              <td><b>Значение</b></td>
+              <td>
+                <input
+                  type="number"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  required
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-        <div style={{ marginTop: '10px' }}>
-          <label>
-            Место:
-            <input
-              type="text"
-              value={place}
-              onChange={(e) => setPlace(e.target.value)}
-              required
-            />
-          </label>
-        </div>
-                                        
-        <div style={{ marginTop: '10px' }}>
-          <label>
-            Значение:
-            <input
-              type="number"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              required
-            />
-          </label>
-        </div>
-
-        <p style={{ marginTop: '10px' }}>
-          Статус (авто): <b>{alarmPreview ? 'ТРЕВОГА' : 'норма'}</b> (порог {THRESHOLD})
-        </p>
-
+        <br />
         <button type="submit">Сохранить</button>
+        &nbsp;&nbsp;&nbsp;
+        <Link to="/">Назад</Link>
       </form>
     </div>
   );
