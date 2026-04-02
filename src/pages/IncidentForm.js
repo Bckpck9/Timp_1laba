@@ -18,8 +18,11 @@ const IncidentForm = ({ mode }) => {
     const loadSensors = async () => {
       try {
         const { data } = await axios.get(`${API}/sensors`);
-        setSensors(data);
-        if (!isEdit && data.length > 0) setSensorId(String(data[0].id));
+        const arr = Array.isArray(data) ? data : [];
+        setSensors(arr);
+        if (!isEdit && arr.length > 0) {
+          setSensorId(String(arr[0].id));
+        }
       } catch (error) {
         console.error('Ошибка загрузки датчиков:', error);
       }
@@ -54,7 +57,10 @@ const IncidentForm = ({ mode }) => {
       message,
       createdAt: isEdit ? undefined : new Date().toISOString(),
     };
-    if (isEdit) delete payload.createdAt;
+
+    if (isEdit) {
+      delete payload.createdAt;
+    }
 
     try {
       if (isEdit) {
@@ -69,54 +75,69 @@ const IncidentForm = ({ mode }) => {
   };
 
   return (
-    <div>
-      <h1>{isEdit ? 'Редактирование инцидента' : 'Добавление инцидента'}</h1>
+    <div className="page">
+      <div className="container">
+        <div className="form-card">
+          <h1 className="page-title">
+            {isEdit ? 'Редактирование инцидента' : 'Добавление инцидента'}
+          </h1>
 
-      <form onSubmit={handleSubmit}>
-        <table cellPadding="8" cellSpacing="0">
-          <colgroup>
-            <col width="160" />
-            <col width="520" />
-          </colgroup>
-
-          <tbody>
-            <tr>
-              <td><b>Датчик</b></td>
-              <td>
-                <select value={sensorId} onChange={(e) => setSensorId(e.target.value)} required>
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <div className="form-group">
+                <label htmlFor="sensorId">Датчик</label>
+                <select
+                  id="sensorId"
+                  className="select"
+                  value={sensorId}
+                  onChange={(e) => setSensorId(e.target.value)}
+                  required
+                >
                   {sensors.map((s) => (
                     <option key={s.id} value={String(s.id)}>
                       {s.name} — {s.place} (id: {s.id})
                     </option>
                   ))}
                 </select>
-              </td>
-            </tr>
+              </div>
 
-            <tr>
-              <td><b>Тип</b></td>
-              <td>
-                <select value={type} onChange={(e) => setType(e.target.value)} required>
+              <div className="form-group">
+                <label htmlFor="type">Тип</label>
+                <select
+                  id="type"
+                  className="select"
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                  required
+                >
                   <option value="ALARM_ON">ALARM_ON</option>
                   <option value="ALARM_OFF">ALARM_OFF</option>
                 </select>
-              </td>
-            </tr>
+              </div>
 
-            <tr>
-              <td><b>Сообщение</b></td>
-              <td>
-                <input value={message} onChange={(e) => setMessage(e.target.value)} />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              <div className="form-group">
+                <label htmlFor="message">Сообщение</label>
+                <input
+                  id="message"
+                  className="input"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+              </div>
+            </div>
 
-        <br />
-        <button type="submit">Сохранить</button>
-        &nbsp;&nbsp;&nbsp;
-        <Link to="/incidents">Назад</Link>
-      </form>
+            <div className="form-actions">
+              <button className="btn" type="submit">
+                Сохранить
+              </button>
+
+              <Link className="btn-link" to="/incidents">
+                Назад
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
