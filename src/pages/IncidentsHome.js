@@ -19,8 +19,6 @@ const IncidentsHome = () => {
           : `${API}/incidents`;
 
         const { data } = await axios.get(url);
-
-        // <-- защита: если вдруг пришло не array, не даём React упасть
         const arr = Array.isArray(data) ? data : [];
         setIncidents(arr);
       } catch (e) {
@@ -44,45 +42,74 @@ const IncidentsHome = () => {
   };
 
   return (
-    <div>
-      <h1>Инциденты{sensorId ? ` (датчик #${sensorId})` : ''}</h1>
+    <div className="page">
+      <div className="container">
+        <div className="card">
+          <h1 className="page-title">
+            Инциденты{sensorId ? ` (датчик #${sensorId})` : ''}
+          </h1>
 
-      {error && <div style={{ margin: '12px 0' }}>{error}</div>}
+          {error && <div className="error-text">{error}</div>}
 
-      <table cellPadding="12" cellSpacing="0">
-        <thead>
-          <tr>
-            <th align="left">ID</th>
-            <th align="left">Sensor ID</th>
-            <th align="left">Тип</th>
-            <th align="left">Время</th>
-            <th align="left">Действия</th>
-          </tr>
-        </thead>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Sensor ID</th>
+                <th>Тип</th>
+                <th>Сообщение</th>
+                <th>Время</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
 
-        <tbody>
-          {incidents.map((inc) => (
-            <tr key={inc.id}>
-              <td>{inc.id}</td>
-              <td>{inc.sensorId}</td>
-              <td>{inc.type || '-'}</td>
-              <td>{inc.createdAt || '-'}</td>
-              <td style={{ whiteSpace: 'nowrap' }}>
-                <Link to={`/incidents/${inc.id}`}>Посмотреть</Link>
-                &nbsp;&nbsp;&nbsp;
-                <button type="button" onClick={() => deleteIncident(inc.id)}>
-                  Удалить
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            <tbody>
+              {incidents.length > 0 ? (
+                incidents.map((inc) => (
+                  <tr key={inc.id}>
+                    <td>{inc.id}</td>
+                    <td>{inc.sensorId}</td>
+                    <td>{inc.type || '-'}</td>
+                    <td>{inc.message || '-'}</td>
+                    <td>{inc.createdAt || '-'}</td>
+                    <td className="actions">
+                      <div className="actions-inline">
+                        <Link className="btn-link" to={`/incidents/${inc.id}`}>
+                          Посмотреть
+                        </Link>
 
-      <br />
-      <Link to="/">Назад</Link>
-      <br />
-      <Link to="/incidents/add">Добавить инцидент</Link>
+                        <button
+                          className="btn btn-danger"
+                          type="button"
+                          onClick={() => deleteIncident(inc.id)}
+                        >
+                          Удалить
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="empty-text">
+                    Нет инцидентов
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          <div className="bottom-actions">
+            <Link className="btn-link" to="/">
+              Назад
+            </Link>
+
+            <Link className="btn-link" to="/incidents/add">
+              Добавить инцидент
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
