@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API = '/api';
+const API = 'api;
 
 const Detail = () => {
   const { id } = useParams();
@@ -22,34 +22,69 @@ const Detail = () => {
     loadSensor();
   }, [id]);
 
-  if (!sensor) return <div>Загрузка...</div>;
+  if (!sensor) {
+    return (
+      <div className="page">
+        <div className="container">
+          <div className="detail-card">
+            <h1 className="page-title">Информация о датчике</h1>
+            <p className="helper-text">Загрузка...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1>Информация о датчике</h1>
+    <div className="page">
+      <div className="container">
+        <div className="detail-card">
+          <h1 className="page-title">Информация о датчике</h1>
 
-      <table cellPadding="8" cellSpacing="0">
-        <colgroup>
-          <col width="160" />
-          <col width="520" />
-        </colgroup>
-        <tbody>
-          <tr><td><b>ID</b></td><td>{sensor.id}</td></tr>
-          <tr><td><b>Название</b></td><td>{sensor.name}</td></tr>
-          <tr><td><b>Место</b></td><td>{sensor.place}</td></tr>
-          <tr><td><b>Значение</b></td><td>{sensor.value}</td></tr>
-          <tr><td><b>Статус</b></td><td>{sensor.alarm ? 'ТРЕВОГА' : 'норма'}</td></tr>
-        </tbody>
-      </table>
+          <table className="info-table">
+            <tbody>
+              <tr>
+                <td>ID</td>
+                <td>{sensor.id}</td>
+              </tr>
+              <tr>
+                <td>Название</td>
+                <td>{sensor.name}</td>
+              </tr>
+              <tr>
+                <td>Место</td>
+                <td>{sensor.place}</td>
+              </tr>
+              <tr>
+                <td>Значение</td>
+                <td>{sensor.value}</td>
+              </tr>
+              <tr>
+                <td>Статус</td>
+                <td>
+                  <span className={`badge ${sensor.alarm ? 'badge-alarm' : 'badge-normal'}`}>
+                    {sensor.alarm ? 'Тревога' : 'Норма'}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-      <br />
-      <button type="button" onClick={() => navigate(-1)}>Назад</button>
-      &nbsp;&nbsp;&nbsp;
-      <Link to={`/edit/${sensor.id}`}>Изменить</Link>
+          <div className="bottom-actions">
+            <button className="btn" type="button" onClick={() => navigate(-1)}>
+              Назад
+            </button>
 
-      <br />
-      <br />
-      <Link to={`/incidents?sensorId=${sensor.id}`}>Инциденты этого датчика</Link>
+            <Link className="btn-link" to={`/edit/${sensor.id}`}>
+              Изменить
+            </Link>
+
+            <Link className="btn-link" to={`/incidents?sensorId=${sensor.id}`}>
+              Инциденты этого датчика
+            </Link>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
